@@ -1,0 +1,67 @@
+
+sudo apt-get update
+
+sudo apt-get install python3-venv
+
+git clone project
+
+python3 -m venv venv
+
+source venv/bin/activate
+
+If you are using MySQL database and MySQLClient
+sudo apt-get install python3-dev default-libmysqlclient-dev build-essential
+
+pip install -r requirements.txt
+
+pip install gunicorn
+
+sudo nano /etc/systemd/system/flaskec.service
+
+
+
+[Unit]
+Description=Gunicorn instance for our flask app
+After=network.target
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/myflask
+ExecStart=/home/ubuntu/myflask/venv/bin/gunicorn -b localhost:8000 app:app
+Restart=always
+[Install]
+WantedBy=multi-user.target
+
+
+
+sudo systemctl daemon-reload
+sudo systemctl start flaskec
+sudo systemctl enable flaskec
+
+
+sudo apt-get install nginx
+
+
+
+sudo systemctl start nginx
+sudo systemctl enable nginx
+
+
+sudo nano /etc/nginx/sites-available/default
+
+
+upstream flaskweb {
+    server 127.0.0.1:8000;
+}
+
+
+
+location / {
+    proxy_pass http://flaskweb;
+}
+
+
+
+sudo systemctl restart nginx
+
+
